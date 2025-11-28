@@ -65,7 +65,6 @@
     <!-- welcome card -->
     <div class="card" id="welcomeCard">
       <h2 style="margin:6px 0 6px">Welcome to ARAMEX Tracking</h2>
-      <p class="muted" style="margin:0 0 12px">Click start to open the tracker — no backend required.</p>
       <button class="btn" onclick="openTracker()">Start Tracking</button>
     </div>
 
@@ -76,20 +75,15 @@
         <div class="left">
           <div class="map-card" id="mapCard">
             <svg class="map" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" id="svgMap" aria-hidden="true">
-              <!-- stylized land shape -->
               <path d="M140,60 C180,50 240,45 320,70 C420,100 520,85 600,70 C740,40 860,60 880,150 C900,240 820,300 760,340 C700,380 640,420 560,470 C480,520 360,520 280,480 C220,450 170,410 150,330 C140,240 120,150 140,60 Z"
                     fill="#37474f" opacity="0.98"></path>
 
-              <!-- route path -->
               <path id="routePath" class="route" d="M820,120 C760,200 700,300 640,380 C600,420 560,440" />
-
-              <!-- markers -->
               <circle id="mYemen" class="marker" cx="820" cy="120" r="6"></circle>
               <circle id="mSA" class="marker" cx="640" cy="380" r="6"></circle>
               <circle id="mDest" class="marker" cx="560" cy="440" r="6"></circle>
             </svg>
 
-            <!-- plane -->
             <div id="plane" class="plane" aria-hidden="true" style="left:820px;top:120px">
               <svg viewBox="0 0 24 24" width="36" height="36" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 13.5L22 3L14 11L11 14L13 15L9 21L7.5 19.5L11 14" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="#ffdbb0"/>
@@ -98,17 +92,15 @@
           </div>
         </div>
 
-        <!-- right panel -->
+        <!-- right: controls + results -->
         <div class="right">
           <h3 style="margin:6px 0 6px">Track Your Shipment</h3>
-          <p class="muted small">Enter the tracking code and press TRACK</p>
 
           <div style="margin-top:8px" class="controls">
             <input id="trackInput" type="text" placeholder="Enter Tracking Number (e.g. XXUK2357)">
             <button id="trackBtn" class="btn" onclick="trackNow()">TRACK</button>
           </div>
 
-          <!-- loader -->
           <div id="loader" class="loader" aria-hidden="true">
             <div class="loader-inner">
               <div class="load-text">Processing tracking number…</div>
@@ -116,7 +108,6 @@
             </div>
           </div>
 
-          <!-- result -->
           <div id="result" class="result" aria-hidden="true">
             <h3>Tracking Result</h3>
             <div id="details" aria-live="polite"></div>
@@ -130,13 +121,9 @@
   </div>
 
 <script>
-/* CONFIG */
-const UNIQUE_CODE = "XXUK2357";   /* <-- UPDATED */
-
-/* reveal lines settings */
+const UNIQUE_CODE = "XXUK2357";
 const REVEAL_INTERVAL = 450;
 const AUTO_HIDE_MS = 120000;
-
 const TRACK_LINES = [
   "<b>Status:</b> Still in transit",
   "<b>Custom Duty:</b> Not yet cleared",
@@ -156,7 +143,6 @@ let revealTimers = [];
 let hideTimer = null;
 let planeAnim = null;
 
-/* open tracker */
 function openTracker(){
   document.getElementById('welcomeCard')?.remove();
   const tc = document.getElementById('trackerCard');
@@ -164,10 +150,9 @@ function openTracker(){
   setTimeout(()=> tc.classList?.add('show'), 50);
 }
 
-/* animate plane */
 function startPlaneAnimation(){
   cancelPlaneAnimation();
-  const svg = document.getElementById('svgMap') || document.querySelector('svg.map');
+  const svg = document.getElementById('svgMap');
   const path = document.getElementById('routePath');
   const plane = document.getElementById('plane');
   if(!path || !plane || !svg) return;
@@ -207,22 +192,18 @@ function startPlaneAnimation(){
 }
 
 function cancelPlaneAnimation(){
-  if(planeAnim){
-    try{ cancelAnimationFrame(planeAnim); }catch(e){}
-    planeAnim = null;
-  }
+  if(planeAnim){ try{ cancelAnimationFrame(planeAnim); }catch(e){} planeAnim = null; }
 }
 
 function easeInOut(t){ return t < .5 ? 2*t*t : -1 + (4 - 2*t) * t; }
 
-/* reveal tracking lines */
 function revealDetails(lines){
   const details = document.getElementById('details');
   details.innerHTML = '';
   revealTimers.forEach(t => clearTimeout(t));
   revealTimers = [];
   let delay = 0;
-  lines.forEach((line)=>{
+  lines.forEach((line, i) => {
     const t = setTimeout(()=>{
       const div = document.createElement('div');
       div.className = 'line';
@@ -235,7 +216,6 @@ function revealDetails(lines){
   });
 }
 
-/* main tracking function */
 function trackNow(){
   const inputEl = document.getElementById('trackInput');
   const btn = document.getElementById('trackBtn');
@@ -254,8 +234,7 @@ function trackNow(){
   details.innerHTML = '';
   result.style.display = 'none';
 
-  inputEl.disabled = true;
-  btn.disabled = true;
+  inputEl.disabled = true; btn.disabled = true;
 
   loader.style.display = 'block';
   prog.style.width = '0%';
@@ -269,9 +248,7 @@ function trackNow(){
   setTimeout(()=>{
     loader.style.display = 'none';
     plane.style.transform = plane.style.transform.replace(' translateY(-6px)','');
-
-    inputEl.disabled = false;
-    btn.disabled = false;
+    inputEl.disabled = false; btn.disabled = false;
 
     if(val === required){
       result.style.display = 'block';
@@ -290,28 +267,24 @@ function trackNow(){
   }, 2000);
 }
 
-/* resize plane init */
 window.addEventListener('resize', ()=>{
   const svg = document.querySelector('svg.map');
   if(!svg) return;
   const path = document.getElementById('routePath');
   const pt = path.getPointAtLength(0);
-  const svgRect = svg.getBoundingClientRect();
   const mapRect = document.getElementById('mapCard').getBoundingClientRect();
-
+  const svgRect = svg.getBoundingClientRect();
   const relLeft = (pt.x / svg.viewBox.baseVal.width) * svgRect.width;
   const relTop  = (pt.y / svg.viewBox.baseVal.height) * svgRect.height;
-
   const plane = document.getElementById('plane');
-  if(plane){
+  if(plane) {
     plane.style.left = `${relLeft}px`;
     plane.style.top  = `${relTop}px`;
     plane.style.transform = 'translate(-50%,-50%)';
   }
 });
 
-/* initial plane position */
-window.addEventListener('load', ()=>{
+window.addEventListener('load', ()=> {
   setTimeout(()=> window.dispatchEvent(new Event('resize')), 120);
 });
 </script>
