@@ -20,41 +20,30 @@
   .grid{display:flex;flex-direction:column;gap:16px}
   @media(min-width:920px){ .grid{flex-direction:row} .left{flex:1 1 60%} .right{flex:1 1 40%} }
 
-  /* map area (SVG) */
   .map-card{position:relative;border-radius:10px;overflow:hidden;background:linear-gradient(180deg,#263238,#1b2428);min-height:280px}
   svg.map{width:100%;height:100%;display:block}
 
-  /* Route stroke animation */
-  path.route{stroke:var(--accent);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0.98}
   circle.marker{fill:#fff;stroke:rgba(0,0,0,0.18);stroke-width:2;filter:drop-shadow(0 6px 10px rgba(0,0,0,0.6))}
 
-  /* plane */
-  .plane{position:absolute;width:36px;height:36px;transform:translate(-50%,-50%);pointer-events:none;z-index:6;filter:drop-shadow(0 6px 14px rgba(0,0,0,0.45));transition:transform .08s linear}
-
-  /* controls */
   .controls{display:flex;gap:8px;align-items:center}
   input[type="text"]{flex:1;padding:10px 12px;border-radius:8px;border:none;font-size:15px}
   button.btn{background:#0b0b0b;color:white;border:none;padding:10px 12px;border-radius:8px;font-weight:700;cursor:pointer}
   button.btn:disabled{opacity:.6;cursor:default}
 
-  /* loader */
   .loader{display:none;margin-top:12px;text-align:center}
   .loader-inner{display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;padding:8px}
   .load-text{font-weight:700;color: #fff}
   .progress{width:88%;height:8px;background:rgba(255,255,255,0.12);border-radius:10px;overflow:hidden}
   .progress > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#ffb86b);transition:width 0.2s linear}
 
-  /* result panel */
   .result{display:none;margin-top:12px;padding:14px;border-radius:10px;background:rgba(0,0,0,0.25);color:var(--muted)}
   .result h3{margin:0 0 8px 0;color:#fff}
   .line{opacity:0;transform:translateY(8px);transition:opacity .48s ease, transform .48s ease;margin:8px 0}
   .line.show{opacity:1;transform:translateY(0)}
   .muted{opacity:.85;font-size:13px}
 
-  /* footer */
   .foot{font-size:12px;text-align:center;opacity:.85;margin-top:10px}
 
-  /* small nicety */
   .small{font-size:13px}
 </style>
 </head>
@@ -62,37 +51,26 @@
   <div class="container">
     <div class="logo">ARAMEX</div>
 
-    <!-- welcome card -->
     <div class="card" id="welcomeCard">
       <h2 style="margin:6px 0 6px">Welcome to ARAMEX Tracking</h2>
       <button class="btn" onclick="openTracker()">Start Tracking</button>
     </div>
 
-    <!-- main tracker -->
     <div class="card" id="trackerCard" style="display:none">
       <div class="grid">
-        <!-- left: SVG custom map -->
         <div class="left">
           <div class="map-card" id="mapCard">
-            <svg class="map" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" id="svgMap" aria-hidden="true">
+            <svg class="map" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
               <path d="M140,60 C180,50 240,45 320,70 C420,100 520,85 600,70 C740,40 860,60 880,150 C900,240 820,300 760,340 C700,380 640,420 560,470 C480,520 360,520 280,480 C220,450 170,410 150,330 C140,240 120,150 140,60 Z"
                     fill="#37474f" opacity="0.98"></path>
 
-              <path id="routePath" class="route" d="M820,120 C760,200 700,300 640,380 C600,420 560,440" />
-              <circle id="mYemen" class="marker" cx="820" cy="120" r="6"></circle>
-              <circle id="mSA" class="marker" cx="640" cy="380" r="6"></circle>
-              <circle id="mDest" class="marker" cx="560" cy="440" r="6"></circle>
+              <circle class="marker" cx="820" cy="120" r="6"></circle>
+              <circle class="marker" cx="640" cy="380" r="6"></circle>
+              <circle class="marker" cx="560" cy="440" r="6"></circle>
             </svg>
-
-            <div id="plane" class="plane" aria-hidden="true" style="left:820px;top:120px">
-              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 13.5L22 3L14 11L11 14L13 15L9 21L7.5 19.5L11 14" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="#ffdbb0"/>
-              </svg>
-            </div>
           </div>
         </div>
 
-        <!-- right: controls + results -->
         <div class="right">
           <h3 style="margin:6px 0 6px">Track Your Shipment</h3>
 
@@ -114,7 +92,7 @@
             <div class="muted" style="margin-top:10px">Details will auto-hide after 2 minutes for privacy.</div>
           </div>
 
-          <div class="foot muted" id="footerInfo"></div>
+          <div class="foot muted">Destination: South Africa</div>
         </div>
       </div>
     </div>
@@ -128,7 +106,7 @@ const TRACK_LINES = [
   "<b>Status:</b> Still in transit",
   "<b>Custom Duty:</b> Not yet cleared",
   "<b>Origin:</b> Yemen",
-  "<b>Current Location:</b> Still in transit",
+  "<b>Current Location:</b> South Africa",
   "<b>Destination:</b> South Africa",
   "<b>Item Quantity:</b> 1",
   "<b>Weight:</b> 6.7 kg",
@@ -136,12 +114,13 @@ const TRACK_LINES = [
   "<b>Receiver:</b> Ketai Mapuranga",
   "<b>Phone:</b> +27622496968",
   "<b>Address:</b> 5697 Langaville 8, Tsakane, Gauteng, Johannesburg",
-  "<b>Last Update:</b> To be cleared for dispatch"
+  "<b>Agent:</b> <span style='color:#ffd700'>Mr Mike Togba</span>",
+  "<b>Last Update:</b> To be cleared for dispatch",
+  "<b>Reach us at:</b> <a href='mailto:aramexglobaldelivery4@gmail.com' style='color:#00ffff;text-decoration:underline'>aramexglobaldelivery4@gmail.com</a>"
 ];
 
 let revealTimers = [];
 let hideTimer = null;
-let planeAnim = null;
 
 function openTracker(){
   document.getElementById('welcomeCard')?.remove();
@@ -150,60 +129,13 @@ function openTracker(){
   setTimeout(()=> tc.classList?.add('show'), 50);
 }
 
-function startPlaneAnimation(){
-  cancelPlaneAnimation();
-  const svg = document.getElementById('svgMap');
-  const path = document.getElementById('routePath');
-  const plane = document.getElementById('plane');
-  if(!path || !plane || !svg) return;
-
-  const total = path.getTotalLength();
-  const duration = 3600;
-  let start = null;
-
-  function step(timestamp){
-    if(!start) start = timestamp;
-    const t = timestamp - start;
-    const progress = Math.min(1, t / duration);
-    const eased = easeInOut(progress);
-
-    const p = path.getPointAtLength(eased * total);
-    const lookAhead = Math.min(total, eased * total + 6);
-    const p2 = path.getPointAtLength(lookAhead);
-    const angle = Math.atan2(p2.y - p.y, p2.x - p.x) * 180 / Math.PI;
-
-    const svgRect = svg.getBoundingClientRect();
-    const mapCardRect = document.getElementById('mapCard').getBoundingClientRect();
-
-    const relLeft = (p.x / svg.viewBox.baseVal.width) * svgRect.width;
-    const relTop  = (p.y / svg.viewBox.baseVal.height) * svgRect.height;
-
-    plane.style.left = (mapCardRect.left + relLeft) - mapCardRect.left + 'px';
-    plane.style.top  = (mapCardRect.top + relTop)  - mapCardRect.top  + 'px';
-    plane.style.transform = `translate(-50%,-50%) rotate(${angle}deg)`;
-
-    if(progress < 1){
-      planeAnim = requestAnimationFrame(step);
-    } else {
-      setTimeout(()=> { start = null; planeAnim = requestAnimationFrame(step); }, 900);
-    }
-  }
-  planeAnim = requestAnimationFrame(step);
-}
-
-function cancelPlaneAnimation(){
-  if(planeAnim){ try{ cancelAnimationFrame(planeAnim); }catch(e){} planeAnim = null; }
-}
-
-function easeInOut(t){ return t < .5 ? 2*t*t : -1 + (4 - 2*t) * t; }
-
 function revealDetails(lines){
   const details = document.getElementById('details');
   details.innerHTML = '';
   revealTimers.forEach(t => clearTimeout(t));
   revealTimers = [];
   let delay = 0;
-  lines.forEach((line, i) => {
+  lines.forEach((line) => {
     const t = setTimeout(()=>{
       const div = document.createElement('div');
       div.className = 'line';
@@ -223,7 +155,6 @@ function trackNow(){
   const prog = document.getElementById('progBar');
   const result = document.getElementById('result');
   const details = document.getElementById('details');
-  const footerInfo = document.getElementById('footerInfo');
 
   const val = (inputEl.value || '').replace(/\s+/g,'').toUpperCase();
   const required = UNIQUE_CODE.replace(/\s+/g,'').toUpperCase();
@@ -231,10 +162,8 @@ function trackNow(){
   clearTimeout(hideTimer);
   revealTimers.forEach(t => clearTimeout(t));
   revealTimers = [];
-  cancelPlaneAnimation();
   details.innerHTML = '';
   result.style.display = 'none';
-  footerInfo.innerHTML = '';
 
   inputEl.disabled = true; btn.disabled = true;
 
@@ -243,26 +172,17 @@ function trackNow(){
   prog.style.transition = 'width 2000ms linear';
   setTimeout(()=> prog.style.width = '100%', 20);
 
-  const plane = document.getElementById('plane');
-  plane.style.transition = 'transform .12s';
-  plane.style.transform += ' translateY(-6px)';
-
   setTimeout(()=>{
     loader.style.display = 'none';
-    plane.style.transform = plane.style.transform.replace(' translateY(-6px)','');
     inputEl.disabled = false; btn.disabled = false;
 
     if(val === required){
       result.style.display = 'block';
       revealDetails(TRACK_LINES);
-      startPlaneAnimation();
-      footerInfo.innerHTML = 'Sender: BIEN SLANDER • Destination: South Africa';
 
       hideTimer = setTimeout(()=>{
         details.innerHTML = '';
         result.style.display = 'none';
-        footerInfo.innerHTML = '';
-        cancelPlaneAnimation();
       }, AUTO_HIDE_MS);
     } else {
       result.style.display = 'block';
@@ -270,27 +190,6 @@ function trackNow(){
     }
   }, 2000);
 }
-
-window.addEventListener('resize', ()=>{
-  const svg = document.querySelector('svg.map');
-  if(!svg) return;
-  const path = document.getElementById('routePath');
-  const pt = path.getPointAtLength(0);
-  const mapRect = document.getElementById('mapCard').getBoundingClientRect();
-  const svgRect = svg.getBoundingClientRect();
-  const relLeft = (pt.x / svg.viewBox.baseVal.width) * svgRect.width;
-  const relTop  = (pt.y / svg.viewBox.baseVal.height) * svgRect.height;
-  const plane = document.getElementById('plane');
-  if(plane) {
-    plane.style.left = `${relLeft}px`;
-    plane.style.top  = `${relTop}px`;
-    plane.style.transform = 'translate(-50%,-50%)';
-  }
-});
-
-window.addEventListener('load', ()=> {
-  setTimeout(()=> window.dispatchEvent(new Event('resize')), 120);
-});
 </script>
 </body>
 </html>
